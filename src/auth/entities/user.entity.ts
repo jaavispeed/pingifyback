@@ -10,7 +10,7 @@ export class User {
     username: string;
     @Column('text', { unique: true })
     email: string;
-    @Column('text')
+    @Column('text', { select: false })
     password: string;
     @Column('bool', { default: true })
     isActive: boolean;
