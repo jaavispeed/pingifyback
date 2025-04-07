@@ -3,7 +3,11 @@
 </p>
 
 # Pingify
-1. npm i
-2. nest start
-1. docker-compose up -d
+1. Clonar proyecto
+2. npm i
+3. Clonar archivo .env.template y renombrarlo por .env
+4. Cambiar las variables de entorno
+5. Levantar la base de datos
+5. nest start
+6. docker-compose up -d
 
