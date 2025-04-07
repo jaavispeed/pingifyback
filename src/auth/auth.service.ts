@@ -27,7 +27,7 @@ export class AuthService {
       delete user.password; // Remove password from the response
       return {
         ...user,
-        token: this.getJwtToken({ email: user.email }),
+        token: this.getJwtToken({ id: user.id }),
       };
 
     } catch (error) {
@@ -39,14 +39,16 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     try {
       const { email, password } = loginUserDto;
-      const user = await this.userRepository.findOne({ where: { email }, select: { email: true, password: true } });
+      const user = await this.userRepository.findOne({ where: { email }, select: { email: true, password: true, id: true } });
 
       if (!user) throw new UnauthorizedException('Credentials are not valid (email)');
       if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('Credentials are not valid (password)');
 
+      console.log({user})
+
       return {
         ...user,
-        token: this.getJwtToken({ email: user.email }),
+        token: this.getJwtToken({ id: user.id }),
       };
 
     } catch (error) {
