@@ -8,6 +8,6 @@
 3. Clonar archivo .env.template y renombrarlo por .env
 4. Cambiar las variables de entorno
 5. Levantar la base de datos
-5. nest start
-6. docker-compose up -d
+6. npm run start:dev
+7. docker-compose up -d
 
