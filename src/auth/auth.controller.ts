@@ -9,6 +9,7 @@ import { RawHeaders } from './decorators/raw-headers.decorator';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
 import { RoleProtected } from './decorators/role-protected/role-protected.decorator';
 import { ValidRoles } from './interfaces/valid-roles';
+import { Auth } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -24,35 +25,19 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @Get('private')
-  @UseGuards(AuthGuard())
-  TestingPrivateRoute(
-    @GetUser() user: User,
-    @GetUser('email') userEmail: string,
+  // este es un ejemplo para validar el rol de la ruta
+  // @Auth(ValidRoles.admin) 
+  
+  // @Get('private3')
+  // @Auth()
 
-    @RawHeaders () rawHeaders: string[]
-  ){
-    return {
-      ok: true,
-      message: 'hola',
-      user,
-      userEmail,
-      rawHeaders
-    }
-  }
-
-
-  // @SetMetadata('roles', ['admin'])
-  @Get('private2')
-  @RoleProtected(ValidRoles.admin)
-  @UseGuards(AuthGuard(), UserRoleGuard)
-  privateRoute2(
-    @GetUser() user: User
-  ){
-    return{
-      ok: true,
-      user
-    }
-  }
+  // privateRoute3(
+  //   @GetUser() user: User
+  // ){
+  //   return{
+  //     ok: true,
+  //     user
+  //   }
+  // }
 
 }
