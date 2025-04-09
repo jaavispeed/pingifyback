@@ -37,26 +37,29 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-    try {
-      const { email, password } = loginUserDto;
-      const user = await this.userRepository.findOne({ where: { email }, select: { email: true, password: true, id: true, username:true } });
-
-      if (!user) throw new UnauthorizedException('Credentials are not valid (email)');
-      if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException('Credentials are not valid (password)');
-
-      console.log({user})
-
-      return {
-        ...user,
-        token: this.getJwtToken({ id: user.id }),
-      };
-
-    } catch (error) {
-      this.handleDBErrors(error);
+    const { email, password } = loginUserDto;
+  
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: { email: true, password: true, id: true, username: true },
+    });
+  
+    if (!user) throw new UnauthorizedException('Correo no registrado');
+  
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
+  
+    delete user.password;
+  
+    return {
+      ...user,
+      token: this.getJwtToken({ id: user.id }),
+    };
   }
+  
 
-  async checkAuthStatus(user: User){
+  async checkAuthStatus(user: User) {
     return {
       ...user,
       token: this.getJwtToken({ id: user.id }),
