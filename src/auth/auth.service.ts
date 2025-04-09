@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,13 +18,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
+  async register(createUserDto: CreateUserDto) {
     try {
       const { password, ...userData } = createUserDto;
 
+      
+
       const user = this.userRepository.create({ ...userData, password: bcrypt.hashSync(password, 10) });
       await this.userRepository.save(user);
-      delete user.password; // Remove password from the response
+      delete user.password; 
       return {
         ...user,
         token: this.getJwtToken({ id: user.id }),
@@ -72,10 +74,14 @@ export class AuthService {
   }
 
   private handleDBErrors(error: any): never {
-    if (error.code === '23505')
-      throw new BadRequestException(error.detail);
-    console.log(error);
-
-    throw new Error('Internal server error');
+    if (error.code === '23505') {
+      if (error.detail.includes('email')) {
+        throw new BadRequestException('El correo ya está registrado');
+      }
+      throw new BadRequestException('Ya existe un registro con ese valor único');
+    }
+  
+    console.error(error);
+    throw new InternalServerErrorException('Error inesperado, revisa los logs del servidor');
   }
 }
