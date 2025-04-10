@@ -1,26 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAiDto } from './dto/create-ai.dto';
-import { UpdateAiDto } from './dto/update-ai.dto';
+import { aiDto } from './dto/ai.dto';
+import { aiCheckUseCase } from './use-case/ai.use-case';
+import OpenAI from 'openai';
+
 
 @Injectable()
 export class AiService {
-  create(createAiDto: CreateAiDto) {
-    return 'This action adds a new ai';
+
+  private openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+
+
+  async mejorarTexto(aidto: aiDto) {
+    return await aiCheckUseCase(
+      this.openai, {
+      prompt: aidto.prompt
+    });
   }
 
-  findAll() {
-    return `This action returns all ai`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} ai`;
-  }
-
-  update(id: number, updateAiDto: UpdateAiDto) {
-    return `This action updates a #${id} ai`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} ai`;
-  }
 }
